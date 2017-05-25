@@ -4,16 +4,15 @@
     <title>Blogs on Dhanuka</title>
     <link>https://dnuka.github.io/blog/index.xml</link>
     <description>Recent content in Blogs on Dhanuka</description>
-    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 25 May 2017 20:58:42 +0530</lastBuildDate>
     <atom:link href="https://dnuka.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
-    
+
     <item>
       <title>Migrate to Hugo from Jekyll</title>
       <link>https://dnuka.github.io/blog/migrate-from-jekyll/</link>
       <pubDate>Thu, 25 May 2017 20:58:42 +0530</pubDate>
-      
+
       <guid>https://dnuka.github.io/blog/migrate-from-jekyll/</guid>
       <description>
 
@@ -185,12 +184,12 @@ git submodule add -b gh-pages git@github.com:your-username/your-repo.git public
 &lt;p&gt;&lt;a href=&#34;http://heyitsalex.net/&#34;&gt;Hey, it&amp;rsquo;s Alex&lt;/a&gt; was migrated in less than a &lt;em&gt;father-with-kids day&lt;/em&gt; from Jekyll to Hugo. You can see all the changes (and screw-ups) by looking at this &lt;a href=&#34;https://github.com/alexandre-normand/alexandre-normand/compare/869d69435bd2665c3fbf5b5c78d4c22759d7613a...b7f6605b1265e83b4b81495423294208cc74d610&#34;&gt;diff&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
-    
+
     <item>
       <title>Upgrading Debian to Unstable/Sid</title>
       <link>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</link>
       <pubDate>Thu, 25 May 2017 19:54:39 +0530</pubDate>
-      
+
       <guid>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</guid>
       <description>
 
@@ -253,6 +252,6 @@ $ sudo reboot
 &lt;p&gt;That&amp;rsquo;s about it. Thanks for reading!&lt;/p&gt;
 </description>
     </item>
-    
+
   </channel>
 </rss>
