@@ -6,7 +6,84 @@
     <description>Recent content on Dhanuka</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Thu, 25 May 2017 20:52:42 +0530</lastBuildDate>
     <atom:link href="https://dnuka.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Projects</title>
+      <link>https://dnuka.github.io/projects/</link>
+      <pubDate>Thu, 25 May 2017 20:52:42 +0530</pubDate>
+      
+      <guid>https://dnuka.github.io/projects/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>upgrading debian to unstable</title>
+      <link>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</link>
+      <pubDate>Thu, 25 May 2017 19:54:39 +0530</pubDate>
+      
+      <guid>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</guid>
+      <description>
+
+&lt;p&gt;&lt;em&gt;Debian Unstable (also known by its codename &amp;ldquo;Sid&amp;rdquo;)&lt;/em&gt; is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Don&amp;rsquo;t let the name fool you. While Debian Unstable might sometimes happen to introduce some bugs or regressions with it&amp;rsquo;s updates, it surely isn&amp;rsquo;t as &amp;lsquo;Unstable&amp;rsquo; as name would suggest. Debian Unstable is made mostly of stable releases of software packages, not development versions as one might think at first.&lt;/p&gt;
+
+&lt;p&gt;Biggest benefits of upgrading to Unstable are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Fresh versions of OS base&lt;/li&gt;
+&lt;li&gt;Fresh versions of packages (software, libraries, etc.)&lt;/li&gt;
+&lt;li&gt;Latest bugfixes and security updates&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;the-process&#34;&gt;The Process&lt;/h3&gt;
+
+&lt;p&gt;Debian doesn’t release sid installation images. Instead you need to install an earlier version of Debian and upgrade to sid. So go and grab the &lt;a href=&#34;https://www.debian.org/CD/torrent-cd/&#34;&gt;latest stable iso&lt;/a&gt;, probably the amd64 one.&lt;/p&gt;
+
+&lt;p&gt;Finally, burn the iso to a CD or add it to a USB stick, boot to it, and install Debian.&lt;/p&gt;
+
+&lt;p&gt;Reboot into your freshly installed Debian, mount your hard drive, and login. Now it’s time to upgrade from stable to sid. Open a terminal and edit the &lt;code&gt;/etc/apt/sources.list&lt;/code&gt; file as root.&lt;/p&gt;
+
+&lt;p&gt;It starts out looking like this:&lt;/p&gt;
+
+&lt;p&gt;{% highlight text %}&lt;/p&gt;
+
+&lt;h1 id=&#34;deb-cdrom-debian-gnu-linux-8-jessie-official-snapshot-amd64-live-install-binary-20160124-16-11-jessie-main&#34;&gt;deb cdrom:[Debian GNU/Linux 8 &lt;em&gt;Jessie&lt;/em&gt; - Official Snapshot amd64 LIVE/INSTALL Binary 20160124-16:11]/ jessie main&lt;/h1&gt;
+
+&lt;p&gt;deb cdrom:[Debian GNU/Linux 8 &lt;em&gt;Jessie&lt;/em&gt; - Official Snapshot amd64 LIVE/INSTALL Binary 20160124-16:11]/ jessie main&lt;/p&gt;
+
+&lt;p&gt;deb &lt;a href=&#34;http://security.debian.org/&#34;&gt;http://security.debian.org/&lt;/a&gt; jessie/updates main
+deb-src &lt;a href=&#34;http://security.debian.org/&#34;&gt;http://security.debian.org/&lt;/a&gt; jessie/updates main&lt;/p&gt;
+
+&lt;p&gt;{% endhighlight %}&lt;/p&gt;
+
+&lt;p&gt;We can delete the cdrom comments, and also we can delete the security and updates repositories. Since we’re updating to sid, we get all of the latest versions of all packages, which already includes security updates. And finally, change the “jessie” to “sid”, so that the result file looks like this:&lt;/p&gt;
+
+&lt;p&gt;{% highlight text %}
+deb &lt;a href=&#34;http://ftp.us.debian.org/debian/&#34;&gt;http://ftp.us.debian.org/debian/&lt;/a&gt; sid main
+deb-src &lt;a href=&#34;http://ftp.us.debian.org/debian/&#34;&gt;http://ftp.us.debian.org/debian/&lt;/a&gt; sid main
+{% endhighlight %}&lt;/p&gt;
+
+&lt;p&gt;Save and exit. Now, update all of the software. This will take awhile. And finally, reboot into sid.&lt;/p&gt;
+
+&lt;p&gt;{% highlight text %}
+$ sudo apt-get update
+$ sudo apt-get dist-upgrade
+$ sudo apt-get autoremove
+$ sudo reboot
+{% endhighlight %}&lt;/p&gt;
+
+&lt;h3 id=&#34;finally&#34;&gt;Finally&lt;/h3&gt;
+
+&lt;p&gt;The Unstable repositories are updated every 6 hours. You can upgrade with &lt;code&gt;apt-get dist-upgrade&lt;/code&gt;, taking all the necessary precautions beforehand of course.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s about it. Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
     
   </channel>
 </rss>
