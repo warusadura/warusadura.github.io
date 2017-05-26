@@ -2,29 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://dnuka.github.io/blog/migrate-from-jekyll/</loc>
-    <lastmod>2017-05-25T20:58:42+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dnuka.github.io/projects/</loc>
-    <lastmod>2017-05-25T20:52:42+05:30</lastmod>
-  </url>
-  
-  <url>
     <loc>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</loc>
     <lastmod>2017-05-25T19:54:39+05:30</lastmod>
   </url>
   
   <url>
+    <loc>https://dnuka.github.io/projects/</loc>
+  </url>
+  
+  <url>
     <loc>https://dnuka.github.io/blog/</loc>
-    <lastmod>2017-05-25T20:58:42+05:30</lastmod>
+    <lastmod>2017-05-25T19:54:39+05:30</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://dnuka.github.io/</loc>
-    <lastmod>2017-05-25T20:58:42+05:30</lastmod>
+    <lastmod>2017-05-25T19:54:39+05:30</lastmod>
     <priority>0</priority>
   </url>
   
