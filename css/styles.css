@@ -5,8 +5,8 @@ body {
 }
 
 .content-sizing {
-	padding-left: 90px;
-	padding-right: 90px;
+	margin-left: auto;
+	margin-right: auto;
 	color:#878787;
 }
 
