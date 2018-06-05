@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dhanuka</title>
-    <link>https://dnuka.github.io/index.xml</link>
+    <link>https://danuka.gitlab.io/index.xml</link>
     <description>Recent content on Dhanuka</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 25 May 2017 19:54:39 +0530</lastBuildDate>
-    <atom:link href="https://dnuka.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://danuka.gitlab.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Upgrading Debian to Unstable/Sid</title>
-      <link>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</link>
+      <link>https://danuka.gitlab.io/blog/upgrading-debian-to-unstable/</link>
       <pubDate>Thu, 25 May 2017 19:54:39 +0530</pubDate>
       
-      <guid>https://dnuka.github.io/blog/upgrading-debian-to-unstable/</guid>
+      <guid>https://danuka.gitlab.io/blog/upgrading-debian-to-unstable/</guid>
       <description>
 
 &lt;p&gt;&lt;em&gt;Debian Unstable (also known by its codename &amp;ldquo;Sid&amp;rdquo;)&lt;/em&gt; is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release.&lt;/p&gt;
@@ -73,10 +73,10 @@
     
     <item>
       <title></title>
-      <link>https://dnuka.github.io/projects/</link>
+      <link>https://danuka.gitlab.io/projects/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://dnuka.github.io/projects/</guid>
+      <guid>https://danuka.gitlab.io/projects/</guid>
       <description></description>
     </item>
     
