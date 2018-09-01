@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <title>about | </title>
+ <link rel="stylesheet" href="/theme/css/semantic.min.css">
+</head>
+<body>
+	<div class="ui container">
+		<div class="ui celled horizontal list">
+		  <div class="item"><a href="/">home</a></div>
+		  <div class="item"><a href="archives.html">blog</a></div>
+		  <div class="item"><a href="projects.html">projects</a></div>
+		  <div class="item"><a href="/contact.html">contact</a></div>
+	  </div>
+<div class="ui container">
+  <h1>Upgrading Debian to Unstable/Sid</h1>
+  <label>Posted on <strong>2018-08-01 18:35:00+05:30</strong></label>
+  <br>
+  <br>
+  <p><em>Debian Unstable (also known by its codename “Sid”)</em> is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release.</p>
+<hr>
+<p>Don’t let the name fool you. While Debian Unstable might sometimes happen to introduce some bugs or regressions with it’s updates, it surely isn’t as ‘Unstable’ as name would suggest. Debian Unstable is made mostly of stable releases of software packages, not development versions as one might think at first.</p>
+<p>Biggest benefits of upgrading to Unstable are:</p>
+<ul>
+<li>Fresh versions of OS base</li>
+<li>Fresh versions of packages (software, libraries, etc.)</li>
+<li>Latest bugfixes and security updates</li>
+</ul>
+<h3>The Process</h3>
+<p>Debian doesn’t release sid installation images. Instead you need to install an earlier version of Debian and upgrade to sid. So go and grab the <a href="https://www.debian.org/CD/torrent-cd/">latest stable iso</a>, probably the amd64 one.</p>
+<p>Finally, burn the iso to a CD or add it to a USB stick, boot to it, and install Debian.</p>
+<p>Reboot into your freshly installed Debian, mount your hard drive, and login. Now it’s time to upgrade from stable to sid. Open a terminal and edit the <code>/etc/apt/sources.list</code> file as root.</p>
+<p>It starts out looking like this:
+        #</p>
+<div class="highlight"><pre><span></span>    <span class="c"># deb cdrom:[Debian GNU/Linux 8 _Jessie_ - Official Snapshot amd64 LIVE/INSTALL Binary 20160124-16:11]/ jessie main</span>
+
+    <span class="err">deb</span> <span class="err">cdrom:[Debian</span> <span class="err">GNU/Linux</span> <span class="err">8</span> <span class="err">_Jessie_</span> <span class="err">-</span> <span class="err">Official</span> <span class="err">Snapshot</span> <span class="err">amd64</span> <span class="err">LIVE/INSTALL</span> <span class="err">Binary</span> <span class="err">20160124-16:11]/</span> <span class="err">jessie</span> <span class="err">main</span>
+
+    <span class="err">deb</span> <span class="err">http://security.debian.org/</span> <span class="err">jessie/updates</span> <span class="err">main</span>
+    <span class="err">deb-src</span> <span class="err">http://security.debian.org/</span> <span class="err">jessie/updates</span> <span class="err">main</span>
+</pre></div>
+
+
+<p>We can delete the cdrom comments, and also we can delete the security and updates repositories. Since we’re updating to sid, we get all of the latest versions of all packages, which already includes security updates. And finally, change the “jessie” to “sid”, so that the result file looks like this:</p>
+<div class="highlight"><pre><span></span>    <span class="err">deb</span> <span class="err">http://ftp.us.debian.org/debian/</span> <span class="err">sid</span> <span class="err">main</span>
+    <span class="err">deb-src</span> <span class="err">http://ftp.us.debian.org/debian/</span> <span class="err">sid</span> <span class="err">main</span>
+</pre></div>
+
+
+<p>Save and exit. Now, update all of the software. This will take awhile. And finally, reboot into sid.</p>
+<p>$ sudo apt-get update
+        $ sudo apt-get dist-upgrade
+        $ sudo apt-get autoremove
+        $ sudo reboot</p>
+<h3>Finally</h3>
+<p>The Unstable repositories are updated every 6 hours. You can upgrade with <code>apt-get dist-upgrade</code>, taking all the necessary precautions beforehand of course.</p>
+</div>
+  </div>
+</body>
+</html>
