@@ -4,6 +4,7 @@
  <meta charset="utf-8" />
  <title> blog | Upgrading Debian to Unstable/Sid </title>
  <link rel="stylesheet" href="/theme/css/semantic.min.css">
+ <link rel="stylesheet" href="/theme/css/styles.css">
 </head>
 <body>
 	<div class="ui container">
@@ -13,12 +14,14 @@
 		  <div class="item"><a href="projects.html">projects</a></div>
 		  <div class="item"><a href="/contact.html">contact</a></div>
 	  </div>
-<div class="ui container">
+<div class="ui container content-sizing">
+  &nbsp;
   <h1>Upgrading Debian to Unstable/Sid</h1>
   <label>Posted on <strong>2018-08-01 18:35:00+05:30</strong></label>
   <br>
   <br>
-  <p><em>Debian Unstable (also known by its codename “Sid”)</em> is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release.</p>
+  <div class="blog-text">
+  	<p><em>Debian Unstable (also known by its codename “Sid”)</em> is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release.</p>
 <hr>
 <p>Don’t let the name fool you. While Debian Unstable might sometimes happen to introduce some bugs or regressions with it’s updates, it surely isn’t as ‘Unstable’ as name would suggest. Debian Unstable is made mostly of stable releases of software packages, not development versions as one might think at first.</p>
 <p>Biggest benefits of upgrading to Unstable are:</p>
@@ -55,6 +58,7 @@
         $ sudo reboot</p>
 <h3>Finally</h3>
 <p>The Unstable repositories are updated every 6 hours. You can upgrade with <code>apt-get dist-upgrade</code>, taking all the necessary precautions beforehand of course.</p>
+  </div>
 </div>
   </div>
 </body>

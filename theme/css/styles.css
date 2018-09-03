@@ -1,0 +1,44 @@
+body {
+	padding-top: 10px;
+	font-family: sans-serif;
+}
+
+p {
+	font-size: 1.1em;
+	color: #333;
+}
+
+.content-sizing {
+	margin-left: auto;
+	margin-right: auto;
+	color:#878787;
+	max-width: 710px;
+}
+
+.main-title {
+	font-size: 40px;
+}
+
+.blog-list {
+	font-size: 1.1em;
+}
+
+.name-color {
+	color: black;
+}
+
+.sub-title {
+	font-size: 35px;
+}
+
+.sub-date {
+	font-size: 13px;
+}
+
+.btn-sizing {
+	font-size: 16px;
+}
+
+.sub-menu {
+	color: black;
+}
