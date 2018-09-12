@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title> Docker for Debian </title>
+    <link rel="stylesheet" href="/theme/css/semantic.min.css">
+    <link rel="stylesheet" href="/theme/css/styles.css">
+</head>
+<body>
+    <div class="ui container">
+<h1>Docker for Debian</h1>
+<p>
+    9 12 2018
+</p>
+<div class="blog-text">
+    <p>Docker is a computer program that performs operating-system-level virtualization, also known as "containerization". And this is the easiest way to get docker installed on your Debian OS. This involves downloading the <code>.deb</code> file for your release and install it manually. You may need to download a new file each time you want to upgrade Docker.</p>
+<p>Go to <a href="https://download.docker.com/linux/debian/dists/">https://download.docker.com/linux/debian/dists/</a>, choose your Debian version, browse to <code>pool/stable/</code>, choose either <code>amd64</code> or <code>armhf</code>, and download the <code>.deb</code> file for the Docker CE(Community Edition) version you want to install.</p>
+<p>Install Docker CE, changing the path below to the path where you downloaded the Docker package.</p>
+<p><code>$ sudo dpkg -i /path/to/package.deb</code></p>
+<p>Verify that Docker CE is installed correctly by running <code>docker version</code></p>
+<p>Disable docker running at startup.</p>
+<div class="highlight"><pre><span></span>$ sudo systemctl disable docker.service
+$ sudo systemctl disable docker.socket
+</pre></div>
+
+
+<p>Use <code>systemctl start docker.service</code> to start docker manually when you need.</p>
+<p>Install <code>docker-compose</code> by <code>pip install docker-compose</code></p>
+</div>
+<br>
+
+<div class="ui horizontal list">
+    <a class="item" href="/">Home</a>
+    <a class="item" href="https://github.com/dnuka">GitHub</a>
+    <a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>
+    <a class="item" href="mailto:nemter@zoho.com">Contact</a>
+</div>
+<br>
+    </div>
+</body>
+</html>

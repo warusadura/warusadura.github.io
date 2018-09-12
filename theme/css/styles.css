@@ -8,34 +8,6 @@ p {
 	color: #333;
 }
 
-.content-sizing {
-	text-align: center;
-}
-
-.main-title {
-	font-size: 30px;
-}
-
-.blog-list {
-	font-size: 1.1em;
-}
-
-.name-color {
-	color: black;
-}
-
-.sub-title {
-	font-size: 35px;
-}
-
-.sub-date {
-	font-size: 13px;
-}
-
-.btn-sizing {
-	font-size: 16px;
-}
-
-.sub-menu {
-	color: black;
+code {
+  color:#878787;
 }
