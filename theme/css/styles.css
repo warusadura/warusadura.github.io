@@ -1,10 +1,9 @@
 body {
 	padding-top: 10px;
-	font-family: sans-serif;
+	font-family: Courier New;
 }
 
 p {
-	font-size: 1.1em;
 	color: #333;
 }
 
@@ -13,5 +12,5 @@ code {
 }
 
 .home {
-  margin-left: 20px;
+  padding-left: 20px;
 }
