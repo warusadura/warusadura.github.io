@@ -11,11 +11,11 @@
     <code><a href="/">< Home</a></code>
 </div>
     <div class="ui container">
-<h1>Docker for Debian</h1>
+<h1 class="title">Docker for Debian</h1>
 <p>
     9 12 2018
 </p>
-<div class="blog-text">
+<div class="article">
     <p>Docker is a computer program that performs operating-system-level virtualization, also known as "containerization". And this is the easiest way to get docker installed on your Debian OS. This involves downloading the <code>.deb</code> file for your release and install it manually. You may need to download a new file each time you want to upgrade Docker.</p>
 <p>Go to <a href="https://download.docker.com/linux/debian/dists/">https://download.docker.com/linux/debian/dists/</a>, choose your Debian version, browse to <code>pool/stable/</code>, choose either <code>amd64</code> or <code>armhf</code>, and download the <code>.deb</code> file for the Docker CE(Community Edition) version you want to install.</p>
 <p>Install Docker CE, changing the path below to the path where you downloaded the Docker package.</p>
@@ -34,11 +34,13 @@ $ sudo systemctl disable docker.socket
 <hr>
 
 <div class="ui horizontal list">
-    <a class="item" href="/">Home</a>
-    <a class="item" href="https://github.com/dnuka">GitHub</a>
-    <a class="item" href="https://twitter.com/dnuka_">Twitter</a>
-    <a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>
-    <a class="item" href="index.rss">RSS</a>
+<div class="footer">
+    <a class="item" href="/">Home</a>&nbsp;&nbsp;
+    <a class="item" href="https://github.com/dnuka">GitHub</a>&nbsp;&nbsp;
+    <a class="item" href="https://twitter.com/dnuka_">Twitter</a>&nbsp;&nbsp;
+    <a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>&nbsp;&nbsp;
+    <a class="item" href="index.rss">RSS</a>&nbsp;&nbsp;
+</div>
 </div>
 <br>
     </div>

@@ -1,6 +1,11 @@
+@font-face {
+    font-family: "Roboto-Regular";
+    src:url("fonts/Roboto-Regular.ttf")format("opentype");
+}
+
 body {
 	padding-top: 10px;
-	font-family: Courier New;
+	font-family: "Roboto-Regular" , Courier New;
 }
 
 p {
@@ -13,4 +18,27 @@ code {
 
 .home {
   padding-left: 20px;
+}
+
+.article {
+    font-size: 1.1em;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.title {
+    font-size: 1.8em;
+}
+
+.main_title {
+    font-size: 2.1em;
+}
+
+.main_content {
+    font-size: 1.1em;
+}
+
+.footer {
+    font-size: 16px;
+    padding-bottom: 18px;
 }
