@@ -4,7 +4,7 @@
 &lt;p&gt;IT automation includes processes and software that help in deploying and managing an …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In last December(2018), I started my Outreachy [1] internship at OpenStack working on "Create Redfish Ansible module" project. So, this is me trying to explain my project to someone completely new to this. Here goes,&lt;/p&gt;
 &lt;p&gt;Ansible...&lt;/p&gt;
 &lt;p&gt;IT automation includes processes and software that help in deploying and managing an IT infrastructure(servers, networking, storage, etc.). In short, Ansible [2] is a simple, agent-less and powerful open source IT automation tool. It uses a very simple language YAML [3] (YAML Ain't Markup Language) in form of &lt;code&gt;playbooks&lt;/code&gt; that allow you to describe your automation tasks in a way that approaches plain English. Also, Ansible doesn’t require any agent on client machines unlike other automation tools(Puppet, Chef, Salt). It uses just a SSH connection to connect the servers. Ansible requires Python to be installed on the client machines.&lt;/p&gt;
-&lt;p&gt;Bellow a simple Ansible playbook(&lt;code&gt;install_apache.yaml&lt;/code&gt;) to install Apache HTTP Server on a Debian based remote server.&lt;/p&gt;
+&lt;p&gt;Below a simple Ansible playbook(&lt;code&gt;install_apache.yaml&lt;/code&gt;) to install Apache HTTP Server on a Debian based remote server.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;- hosts: all
   remote_user: root
   tasks:
