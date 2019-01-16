@@ -12,10 +12,6 @@ p {
 	color: #333;
 }
 
-code {
-  color:#878787;
-}
-
 .home {
   padding-left: 20px;
 }
@@ -41,4 +37,18 @@ code {
 .footer {
     font-size: 16px;
     padding-bottom: 18px;
+}
+
+pre {
+    margin-bottom: 1em;
+}
+
+code, pre {
+    background: #f4f4f4;
+    overflow: auto;
+    font-size: 14px;
+}
+
+.back {
+    background: #fff;
 }

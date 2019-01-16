@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title> Ansible, Redfish and Sushy </title>
+    <link rel="stylesheet" href="/theme/css/semantic.min.css">
+    <link rel="stylesheet" href="/theme/css/styles.css">
+</head>
+<body>
+<div class="home">
+    <code class="back"><a href="/">< Home</a></code>
+</div>
+    <div class="ui container">
+<h1 class="title">Ansible, Redfish and Sushy</h1>
+<p>
+    1 16 2019
+</p>
+<div class="article">
+    <p>In last December(2018), I started my Outreachy [1] internship at OpenStack working on "Create Redfish Ansible module" project. So, this is me trying to explain my project to someone completely new to this. Here goes,</p>
+<p>Ansible...</p>
+<p>IT automation includes processes and software that help in deploying and managing an IT infrastructure(servers, networking, storage, etc.). In short, Ansible [2] is a simple, agent-less and powerful open source IT automation tool. It uses a very simple language YAML [3] (YAML Ain't Markup Language) in form of <code>playbooks</code> that allow you to describe your automation tasks in a way that approaches plain English. Also, Ansible doesn’t require any agent on client machines unlike other automation tools(Puppet, Chef, Salt). It uses just a SSH connection to connect the servers. Ansible requires Python to be installed on the client machines.</p>
+<p>Bellow a simple Ansible playbook(<code>install_apache.yaml</code>) to install Apache HTTP Server on a Debian based remote server.</p>
+<div class="highlight"><pre><span></span>- hosts: all
+  remote_user: root
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: latest
+</pre></div>
+
+
+<p>To execute the playbook on a single server, you can use this command: <code>ansible-playbook -i 100.58.17.57, install_apache.yaml</code>.
+If you have 100 or more remote servers and you want to install <code>apache2</code> on each of them, with Ansible you can automate this repetitive task using that same command. First, put remote IP addresses on a file(<code>HOSTS</code>) and then execute <code>ansible-playbook -i HOSTS install_apache.yaml</code></p>
+<p>Redfish...</p>
+<p>If you’re very much new to Cloud infrastructure related topics, just like me, you have probably never heard of the BMC [4] (baseboard management controller). BMC is a small computer that sits on every server motherboard and it's used to perform remote management tasks that a sysadmin would otherwise need to physically do on the racked server(power-on, reset, etc.). In shot, Redfish [5] is one of the newest protocols used to interact with the BMC. Redfish leverages common internet and web services standard to expose information directly to the modern tool chain. Redfish specifies a RESTFul [6] interface and utilizes defined JSON payloads, usable by client applications and browser based GUI.
+Following Python code sample shows how to retrieve the serial number from a remote server using Redfish.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;http://100.58.17.57/redfish/v1/Systems/1&#39;</span><span class="p">)</span>
+<span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;SerialNumber&#39;</span><span class="p">])</span>
+</pre></div>
+
+
+<p>Sushy and Sushy-tools...</p>
+<p>Sushy [7] is a client side Python implementation of the Redfish protocol and and it can be used to communicate with Redfish based systems.</p>
+<p>Sushy-tools [8] contains two emulators <code>sushy-static</code> and <code>sushy-emulator</code>, aiming at supporting the development and testing of the Redfish protocol implementations, in particular Sushy library. To simply put, Sushy-tools are the Redfish emulators(just like an Android emulator).</p>
+<p>The Project...</p>
+<p>From the previous <code>install_apache.yaml</code> example(at <code>line 5</code>) I'm using the <code>apt</code> Ansible module. Ansible <code>modules</code> are just piece of code that can be
+written in any language(but mostly written in Python) with the condition that its output needs to be in the <code>JSON</code> format. My project is to create a new custom Redfish, Ansible module to automate the power and boot process of a remote server and to make sure those features work correctly on both module side and in the <code>sushy-emulator</code>. Also, update existing Redfish, Ansible modules [9], [10] to work properly in the <code>sushy-emulator</code>.</p>
+<p>[1] <a href="https://dnuka.github.io/openstack-internship.html">https://dnuka.github.io/openstack-internship.html</a></p>
+<p>[2] <a href="https://github.com/ansible/ansible">https://github.com/ansible/ansible</a></p>
+<p>[3] <a href="https://yaml.org/">https://yaml.org/</a></p>
+<p>[4] <a href="https://en.wikipedia.org/wiki/Intelligent_Platform_Management_Interface#Baseboard_management_controller">https://en.wikipedia.org/wiki/Intelligent_Platform_Management_Interface#Baseboard_management_controller</a></p>
+<p>[5] <a href="https://www.dmtf.org/standards/redfish">https://www.dmtf.org/standards/redfish</a></p>
+<p>[6] <a href="https://www.codecademy.com/articles/what-is-rest">https://www.codecademy.com/articles/what-is-rest</a></p>
+<p>[7] <a href="https://github.com/openstack/sushy">https://github.com/openstack/sushy</a></p>
+<p>[8] <a href="https://github.com/openstack/sushy-tools">https://github.com/openstack/sushy-tools</a></p>
+<p>[9] <a href="https://github.com/ansible/ansible/tree/devel/lib/ansible/modules/remote_management/redfish">https://github.com/ansible/ansible/tree/devel/lib/ansible/modules/remote_management/redfish</a></p>
+<p>[10] <a href="https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/redfish_utils.py">https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/redfish_utils.py</a></p>
+</div>
+<br>
+<hr>
+
+<div class="ui horizontal list">
+<div class="footer">
+    <a class="item" href="/">Home</a>&nbsp;&nbsp;
+    <a class="item" href="https://github.com/dnuka">GitHub</a>&nbsp;&nbsp;
+    <a class="item" href="https://twitter.com/dnuka_">Twitter</a>&nbsp;&nbsp;
+    <a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>&nbsp;&nbsp;
+    <a class="item" href="index.rss">RSS</a>&nbsp;&nbsp;
+</div>
+</div>
+<br>
+    </div>
+</body>
+</html>

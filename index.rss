@@ -1,5 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Dhanuka's web log</title><link href="/" rel="alternate"></link><link href="/index.rss" rel="self"></link><id>/</id><updated>2018-12-14T20:53:00+05:30</updated><entry><title>How I got my internship at OpenStack</title><link href="/openstack-internship.html" rel="alternate"></link><published>2018-12-14T20:53:00+05:30</published><updated>2018-12-14T20:53:00+05:30</updated><author><name>dnuka</name></author><id>tag:None,2018-12-14:/openstack-internship.html</id><summary type="html">&lt;p&gt;Folks, this is the story of, how I become one of 46 interns of &lt;a href="https://www.outreachy.org"&gt;Outreachy&lt;/a&gt; December 2018 to March 2019 round. English is not my mother tongue; please excuse any errors.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dhanuka's web log</title><link href="/" rel="alternate"></link><link href="/index.rss" rel="self"></link><id>/</id><updated>2019-01-16T22:27:00+05:30</updated><entry><title>Ansible, Redfish and Sushy</title><link href="/openstack-project.html" rel="alternate"></link><published>2019-01-16T22:27:00+05:30</published><updated>2019-01-16T22:27:00+05:30</updated><author><name>dnuka</name></author><id>tag:None,2019-01-16:/openstack-project.html</id><summary type="html">&lt;p&gt;In last December(2018), I started my Outreachy [1] internship at OpenStack working on "Create Redfish Ansible module" project. So, this is me trying to explain my project to someone completely new to this. Here goes,&lt;/p&gt;
+&lt;p&gt;Ansible...&lt;/p&gt;
+&lt;p&gt;IT automation includes processes and software that help in deploying and managing an …&lt;/p&gt;</summary><content type="html">&lt;p&gt;In last December(2018), I started my Outreachy [1] internship at OpenStack working on "Create Redfish Ansible module" project. So, this is me trying to explain my project to someone completely new to this. Here goes,&lt;/p&gt;
+&lt;p&gt;Ansible...&lt;/p&gt;
+&lt;p&gt;IT automation includes processes and software that help in deploying and managing an IT infrastructure(servers, networking, storage, etc.). In short, Ansible [2] is a simple, agent-less and powerful open source IT automation tool. It uses a very simple language YAML [3] (YAML Ain't Markup Language) in form of &lt;code&gt;playbooks&lt;/code&gt; that allow you to describe your automation tasks in a way that approaches plain English. Also, Ansible doesn’t require any agent on client machines unlike other automation tools(Puppet, Chef, Salt). It uses just a SSH connection to connect the servers. Ansible requires Python to be installed on the client machines.&lt;/p&gt;
+&lt;p&gt;Bellow a simple Ansible playbook(&lt;code&gt;install_apache.yaml&lt;/code&gt;) to install Apache HTTP Server on a Debian based remote server.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;- hosts: all
+  remote_user: root
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: latest
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To execute the playbook on a single server, you can use this command: &lt;code&gt;ansible-playbook -i 100.58.17.57, install_apache.yaml&lt;/code&gt;.
+If you have 100 or more remote servers and you want to install &lt;code&gt;apache2&lt;/code&gt; on each of them, with Ansible you can automate this repetitive task using that same command. First, put remote IP addresses on a file(&lt;code&gt;HOSTS&lt;/code&gt;) and then execute &lt;code&gt;ansible-playbook -i HOSTS install_apache.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Redfish...&lt;/p&gt;
+&lt;p&gt;If you’re very much new to Cloud infrastructure related topics, just like me, you have probably never heard of the BMC [4] (baseboard management controller). BMC is a small computer that sits on every server motherboard and it's used to perform remote management tasks that a sysadmin would otherwise need to physically do on the racked server(power-on, reset, etc.). In shot, Redfish [5] is one of the newest protocols used to interact with the BMC. Redfish leverages common internet and web services standard to expose information directly to the modern tool chain. Redfish specifies a RESTFul [6] interface and utilizes defined JSON payloads, usable by client applications and browser based GUI.
+Following Python code sample shows how to retrieve the serial number from a remote server using Redfish.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;json&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;urllib.request&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;urlopen&lt;/span&gt;
+
+&lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;urlopen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;http://100.58.17.57/redfish/v1/Systems/1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;json_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;loads&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;json_data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;SerialNumber&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Sushy and Sushy-tools...&lt;/p&gt;
+&lt;p&gt;Sushy [7] is a client side Python implementation of the Redfish protocol and and it can be used to communicate with Redfish based systems.&lt;/p&gt;
+&lt;p&gt;Sushy-tools [8] contains two emulators &lt;code&gt;sushy-static&lt;/code&gt; and &lt;code&gt;sushy-emulator&lt;/code&gt;, aiming at supporting the development and testing of the Redfish protocol implementations, in particular Sushy library. To simply put, Sushy-tools are the Redfish emulators(just like an Android emulator).&lt;/p&gt;
+&lt;p&gt;The Project...&lt;/p&gt;
+&lt;p&gt;From the previous &lt;code&gt;install_apache.yaml&lt;/code&gt; example(at &lt;code&gt;line 5&lt;/code&gt;) I'm using the &lt;code&gt;apt&lt;/code&gt; Ansible module. Ansible &lt;code&gt;modules&lt;/code&gt; are just piece of code that can be
+written in any language(but mostly written in Python) with the condition that its output needs to be in the &lt;code&gt;JSON&lt;/code&gt; format. My project is to create a new custom Redfish, Ansible module to automate the power and boot process of a remote server and to make sure those features work correctly on both module side and in the &lt;code&gt;sushy-emulator&lt;/code&gt;. Also, update existing Redfish, Ansible modules [9], [10] to work properly in the &lt;code&gt;sushy-emulator&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;[1] &lt;a href="https://dnuka.github.io/openstack-internship.html"&gt;https://dnuka.github.io/openstack-internship.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[2] &lt;a href="https://github.com/ansible/ansible"&gt;https://github.com/ansible/ansible&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[3] &lt;a href="https://yaml.org/"&gt;https://yaml.org/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[4] &lt;a href="https://en.wikipedia.org/wiki/Intelligent_Platform_Management_Interface#Baseboard_management_controller"&gt;https://en.wikipedia.org/wiki/Intelligent_Platform_Management_Interface#Baseboard_management_controller&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[5] &lt;a href="https://www.dmtf.org/standards/redfish"&gt;https://www.dmtf.org/standards/redfish&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[6] &lt;a href="https://www.codecademy.com/articles/what-is-rest"&gt;https://www.codecademy.com/articles/what-is-rest&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[7] &lt;a href="https://github.com/openstack/sushy"&gt;https://github.com/openstack/sushy&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[8] &lt;a href="https://github.com/openstack/sushy-tools"&gt;https://github.com/openstack/sushy-tools&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[9] &lt;a href="https://github.com/ansible/ansible/tree/devel/lib/ansible/modules/remote_management/redfish"&gt;https://github.com/ansible/ansible/tree/devel/lib/ansible/modules/remote_management/redfish&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;[10] &lt;a href="https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/redfish_utils.py"&gt;https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/redfish_utils.py&lt;/a&gt;&lt;/p&gt;</content></entry><entry><title>How I got my internship at OpenStack</title><link href="/openstack-internship.html" rel="alternate"></link><published>2018-12-14T20:53:00+05:30</published><updated>2018-12-14T20:53:00+05:30</updated><author><name>dnuka</name></author><id>tag:None,2018-12-14:/openstack-internship.html</id><summary type="html">&lt;p&gt;Folks, this is the story of, how I become one of 46 interns of &lt;a href="https://www.outreachy.org"&gt;Outreachy&lt;/a&gt; December 2018 to March 2019 round. English is not my mother tongue; please excuse any errors.&lt;/p&gt;
 &lt;p&gt;A little background...&lt;/p&gt;
 &lt;p&gt;My name is Dhanuka. I'm a 24 year old, self-taught software developer from Sri Lanka. What …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Folks, this is the story of, how I become one of 46 interns of &lt;a href="https://www.outreachy.org"&gt;Outreachy&lt;/a&gt; December 2018 to March 2019 round. English is not my mother tongue; please excuse any errors.&lt;/p&gt;
 &lt;p&gt;A little background...&lt;/p&gt;
