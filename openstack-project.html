@@ -20,29 +20,27 @@
 <p>Ansible...</p>
 <p>IT automation includes processes and software that help in deploying and managing an IT infrastructure(servers, networking, storage, etc.). In short, Ansible [2] is a simple, agent-less and powerful open source IT automation tool. It uses a very simple language YAML [3] (YAML Ain't Markup Language) in form of <code>playbooks</code> that allow you to describe your automation tasks in a way that approaches plain English. Also, Ansible doesn’t require any agent on client machines unlike other automation tools(Puppet, Chef, Salt). It uses just a SSH connection to connect the servers. Ansible requires Python to be installed on the client machines.</p>
 <p>Bellow a simple Ansible playbook(<code>install_apache.yaml</code>) to install Apache HTTP Server on a Debian based remote server.</p>
-<div class="highlight"><pre><span></span><span class="err">- hosts: all</span>
-<span class="err">  remote_user: root</span>
-<span class="err">  tasks:</span>
-<span class="err">    - name: Install Apache</span>
-<span class="err">      apt:</span>
-<span class="err">        name: apache2</span>
-<span class="err">        state: latest</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code>- hosts: all
+  remote_user: root
+  tasks:
+    - name: Install Apache
+      apt:
+        name: apache2
+        state: latest
+</code></pre></div>
 
 <p>To execute the playbook on a single server, you can use this command: <code>ansible-playbook -i 100.58.17.57, install_apache.yaml</code>.
 If you have 100 or more remote servers and you want to install <code>apache2</code> on each of them, with Ansible you can automate this repetitive task using that same command. First, put remote IP addresses on a file(<code>HOSTS</code>) and then execute <code>ansible-playbook -i HOSTS install_apache.yaml</code></p>
 <p>Redfish...</p>
 <p>If you’re very much new to Cloud infrastructure related topics, just like me, you have probably never heard of the BMC [4] (baseboard management controller). BMC is a small computer that sits on every server motherboard and it's used to perform remote management tasks that a sysadmin would otherwise need to physically do on the racked server(power-on, reset, etc.). In shot, Redfish [5] is one of the newest protocols used to interact with the BMC. Redfish leverages common internet and web services standard to expose information directly to the modern tool chain. Redfish specifies a RESTFul [6] interface and utilizes defined JSON payloads, usable by client applications and browser based GUI.
 Following Python code sample shows how to retrieve the serial number from a remote server using Redfish.</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;http://100.58.17.57/redfish/v1/Systems/1&#39;</span><span class="p">)</span>
 <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;SerialNumber&#39;</span><span class="p">])</span>
-</pre></div>
-
+<span class="nb">print</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;SerialNumber&#39;</span><span class="p">])</span>
+</code></pre></div>
 
 <p>Sushy and Sushy-tools...</p>
 <p>Sushy [7] is a client side Python implementation of the Redfish protocol and and it can be used to communicate with Redfish based systems.</p>
