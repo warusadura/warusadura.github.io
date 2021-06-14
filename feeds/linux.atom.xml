@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Dhanuka's web log - Linux</title><link href="https://dnuka.github.io/" rel="alternate"></link><link href="https://dnuka.github.io/feeds/linux.atom.xml" rel="self"></link><id>https://dnuka.github.io/</id><updated>2018-09-12T19:00:00+05:30</updated><entry><title>Docker for Debian</title><link href="https://dnuka.github.io/docker-for-debain.html" rel="alternate"></link><published>2018-09-12T19:00:00+05:30</published><updated>2018-09-12T19:00:00+05:30</updated><author><name>dnuka</name></author><id>tag:dnuka.github.io,2018-09-12:/docker-for-debain.html</id><summary type="html">&lt;p&gt;Docker is a computer program that performs operating-system-level virtualization, also known as "containerization". And this is the easiest way to get docker installed on your Debian OS. This involves downloading the &lt;code&gt;.deb&lt;/code&gt; file for your release and install it manually. You may need to download a new file each time …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Docker is a computer program that performs operating-system-level virtualization, also known as "containerization". And this is the easiest way to get docker installed on your Debian OS. This involves downloading the &lt;code&gt;.deb&lt;/code&gt; file for your release and install it manually. You may need to download a new file each time you want to upgrade Docker.&lt;/p&gt;
+&lt;p&gt;Go to &lt;a href="https://download.docker.com/linux/debian/dists/"&gt;https://download.docker.com/linux/debian/dists/&lt;/a&gt;, choose your Debian version, browse to &lt;code&gt;pool/stable/&lt;/code&gt;, choose either &lt;code&gt;amd64&lt;/code&gt; or &lt;code&gt;armhf&lt;/code&gt;, and download the &lt;code&gt;.deb&lt;/code&gt; file for the Docker CE(Community Edition) version you want to install.&lt;/p&gt;
+&lt;p&gt;Install Docker CE, changing the path below to the path where you downloaded the Docker package.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ sudo dpkg -i /path/to/package.deb&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Verify that Docker CE is installed correctly by running &lt;code&gt;docker version&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Disable docker running at startup.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;$ sudo systemctl disable docker.service
+$ sudo systemctl disable docker.socket
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Use &lt;code&gt;systemctl start docker.service&lt;/code&gt; to start docker manually when you need.&lt;/p&gt;
+&lt;p&gt;Install &lt;code&gt;docker-compose&lt;/code&gt; by &lt;code&gt;pip install docker-compose&lt;/code&gt;&lt;/p&gt;</content><category term="Linux"></category></entry><entry><title>Upgrading Debian to Unstable/Sid</title><link href="https://dnuka.github.io/upgrading-debian-to-unstable.html" rel="alternate"></link><published>2018-09-10T11:12:00+05:30</published><updated>2018-09-10T11:12:00+05:30</updated><author><name>dnuka</name></author><id>tag:dnuka.github.io,2018-09-10:/upgrading-debian-to-unstable.html</id><summary type="html">&lt;p&gt;&lt;em&gt;Debian Unstable (also known by its codename “Sid”)&lt;/em&gt; is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release …&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;em&gt;Debian Unstable (also known by its codename “Sid”)&lt;/em&gt; is not strictly a release, but rather a rolling development version of the Debian distribution containing the latest and greatest packages which have been introduced into the Debian system. If you are a hardcore developer or tester you should use this release.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Don’t let the name fool you. While Debian Unstable might sometimes happen to introduce some bugs or regressions with it’s updates, it surely isn’t as ‘Unstable’ as name would suggest. Debian Unstable is made mostly of stable releases of software packages, not development versions as one might think at first.&lt;/p&gt;
+&lt;p&gt;Biggest benefits of upgrading to Unstable are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fresh versions of OS base&lt;/li&gt;
+&lt;li&gt;Fresh versions of packages (software, libraries, etc.)&lt;/li&gt;
+&lt;li&gt;Latest bugfixes and security updates&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;The Process&lt;/h3&gt;
+&lt;p&gt;Debian doesn’t release sid installation images. Instead you need to install an earlier version of Debian and upgrade to sid. So go and grab the &lt;a href="https://www.debian.org/CD/torrent-cd/"&gt;latest stable iso&lt;/a&gt;, probably the amd64 one.&lt;/p&gt;
+&lt;p&gt;Finally, burn the iso to a CD or add it to a USB stick, boot to it, and install Debian.&lt;/p&gt;
+&lt;p&gt;Reboot into your freshly installed Debian, mount your hard drive, and login. Now it’s time to upgrade from stable to sid. Open a terminal and edit the &lt;code&gt;/etc/apt/sources.list&lt;/code&gt; file as root.&lt;/p&gt;
+&lt;p&gt;It starts out looking like this:
+        #&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;    &lt;span class="c"&gt;# deb cdrom:[Debian GNU/Linux 8 _Jessie_ - Official Snapshot amd64 LIVE/INSTALL Binary 20160124-16:11]/ jessie main&lt;/span&gt;
+
+    &lt;span class="err"&gt;deb&lt;/span&gt; &lt;span class="err"&gt;cdrom:[Debian&lt;/span&gt; &lt;span class="err"&gt;GNU/Linux&lt;/span&gt; &lt;span class="err"&gt;8&lt;/span&gt; &lt;span class="err"&gt;_Jessie_&lt;/span&gt; &lt;span class="err"&gt;-&lt;/span&gt; &lt;span class="err"&gt;Official&lt;/span&gt; &lt;span class="err"&gt;Snapshot&lt;/span&gt; &lt;span class="err"&gt;amd64&lt;/span&gt; &lt;span class="err"&gt;LIVE/INSTALL&lt;/span&gt; &lt;span class="err"&gt;Binary&lt;/span&gt; &lt;span class="err"&gt;20160124-16:11]/&lt;/span&gt; &lt;span class="err"&gt;jessie&lt;/span&gt; &lt;span class="err"&gt;main&lt;/span&gt;
+
+    &lt;span class="err"&gt;deb&lt;/span&gt; &lt;span class="err"&gt;http://security.debian.org/&lt;/span&gt; &lt;span class="err"&gt;jessie/updates&lt;/span&gt; &lt;span class="err"&gt;main&lt;/span&gt;
+    &lt;span class="err"&gt;deb-src&lt;/span&gt; &lt;span class="err"&gt;http://security.debian.org/&lt;/span&gt; &lt;span class="err"&gt;jessie/updates&lt;/span&gt; &lt;span class="err"&gt;main&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We can delete the cdrom comments, and also we can delete the security and updates repositories. Since we’re updating to sid, we get all of the latest versions of all packages, which already includes security updates. And finally, change the “jessie” to “sid”, so that the result file looks like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;    &lt;span class="err"&gt;deb&lt;/span&gt; &lt;span class="err"&gt;http://ftp.us.debian.org/debian/&lt;/span&gt; &lt;span class="err"&gt;sid&lt;/span&gt; &lt;span class="err"&gt;main&lt;/span&gt;
+    &lt;span class="err"&gt;deb-src&lt;/span&gt; &lt;span class="err"&gt;http://ftp.us.debian.org/debian/&lt;/span&gt; &lt;span class="err"&gt;sid&lt;/span&gt; &lt;span class="err"&gt;main&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Save and exit. Now, update all of the software. This will take awhile. And finally, reboot into sid.&lt;/p&gt;
+&lt;p&gt;$ sudo apt-get update
+        $ sudo apt-get dist-upgrade
+        $ sudo apt-get autoremove
+        $ sudo reboot&lt;/p&gt;
+&lt;h3&gt;Finally&lt;/h3&gt;
+&lt;p&gt;The Unstable repositories are updated every 6 hours. You can upgrade with &lt;code&gt;apt-get dist-upgrade&lt;/code&gt;, taking all the necessary precautions beforehand of course.&lt;/p&gt;</content><category term="Linux"></category></entry></feed>
