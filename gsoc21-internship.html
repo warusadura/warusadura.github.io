@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title> GSoC 21: Contributing to Gnome libsecret </title>
+    <link rel="stylesheet" href="https://dnuka.github.io/theme/css/semantic.min.css">
+    <link rel="stylesheet" href="https://dnuka.github.io/theme/css/styles.css">
+</head>
+<body>
+<div class="home">
+    <code class="back"><a href="/">< Home</a></code>
+</div>
+    <div class="ui container">
+<h1 class="title">GSoC 21: Contributing to Gnome libsecret</h1>
+<p>
+    6 20 2021
+</p>
+<div class="article">
+    <p>I’m one of the Google Summer of Code (GSoC 2021) <a href="https://summerofcode.withgoogle.com/organizations/5276176043474944/">interns</a> contributing to the GNOME Foundation. And I'm contributing to the <a href="https://gitlab.gnome.org/GNOME/libsecret/">libsecret</a> project.</p>
+<blockquote>
+<p>libsecret is a library for storing and retrieving passwords and other secrets. It communicates with the "Secret Service" using DBus - <a href="https://developer.gnome.org/libsecret/">gnome.org</a></p>
+</blockquote>
+<p>To simply put, libsecret is a credential/secret/password manager. libsecret has a feature that you can use to store secrets in a file database or simply a file. This file is encrypted. And the key to encrypt this file is derived from the user's login password. This not an ideal situation. Because, the entire security of the file database relies on the user's login password. This situation can be improved if the key[s] are protected by hardware. This is when a <a href="https://en.wikipedia.org/wiki/Trusted_Platform_Module">TPM</a> comes into play.</p>
+<blockquote>
+<p>Trusted Platform Module (TPM, also known as ISO/IEC 11889) is an international standard for a secure cryptoprocessor, a dedicated microcontroller designed to secure hardware through integrated cryptographic keys - <a href="https://en.wikipedia.org/wiki/Trusted_Platform_Module">Wikipedia</a>.</p>
+</blockquote>
+<p>If you don't know anything about the TPMs I'd recommend watching, <a href="https://www.youtube.com/watch?v=XwaSyHJIos8">Using the TPM - It's Not Rocket Science (Anymore) - Johannes Holland &amp; Peter Huewe</a> talk on YouTube. TPM is a fantastic tool for everyday cryptographic scenarios. And it's not that hard to use thanks to <a href="https://github.com/tpm2-software/tpm2-tools">tpm2-tools</a>. However, talking to a TPM via an API (or simply TPM programming) is not that simple. Actually, it's very similar to rocket science :) And there are no books or good developer resources on TPM programming. The lack of programming resources is a frustrating experience. However, the TPM developer community is fantastic. They have been helping me since day one.</p>
+<p>In simple terms, my goal is to <a href="https://gitlab.gnome.org/Teams/Engagement/gsoc-2021/-/issues/13">extend</a> current libsecret file database encryption-decryption functionality to work with a TPM. So, the TPM will handle key generation, wrapping-unwrapping of keys and key storage processes. This is very exciting work! Honestly, this was not the case in my early stage of contributing to libsecret. I knew nothing about libsecret, computer security, cryptography or TPMs. Thanks to both my mentors and upstream TSS developers, I'm confidently finding my way around the project. So, thank you <a href="https://github.com/ueno">Daiki Ueno</a> for guiding me through every step of the way from my initial contribution to making my final project proposal for GSoC. And thank you <a href="https://github.com/ansasaki">Anderson Sasaki</a> for helping me out with my questions every single day. Also, I would very much like to thank, upstream TSS developers <a href="https://github.com/PeterHuewe">Peter Huewe</a>, <a href="https://github.com/flihp">Philip Tricca</a> and <a href="https://github.com/AndreasFuchsSIT">Andreas Fuchs</a> for helping me out with all things related to TPMs.</p>
+<p>Stay tuned for my next blog post, "Hello World TPM!".</p>
+</div>
+<br>
+<hr>
+
+<div class="ui horizontal list">
+<div class="footer">
+    <a class="item" href="/">Home</a>&nbsp;&nbsp;
+    <a class="item" href="https://github.com/dnuka">GitHub</a>&nbsp;&nbsp;
+    <a class="item" href="https://twitter.com/dnuka_">Twitter</a>&nbsp;&nbsp;
+    <a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>&nbsp;&nbsp;
+    <a class="item" href="rss.xml">RSS</a>&nbsp;&nbsp;
+</div>
+</div>
+<br>
+    </div>
+</body>
+</html>
