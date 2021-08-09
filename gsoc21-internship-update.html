@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title> GSoC 21: GNOME/libsecret project update </title>
+    <link rel="stylesheet" href="https://dnuka.github.io/theme/css/semantic.min.css">
+    <link rel="stylesheet" href="https://dnuka.github.io/theme/css/styles.css">
+</head>
+<body>
+<div class="home">
+    <code class="back"><a href="/">< Home</a></code>
+</div>
+    <div class="ui container">
+<h1 class="title">GSoC 21: GNOME/libsecret project update</h1>
+<p>
+    8 9 2021
+</p>
+<div class="article">
+    <p>I have a plenty of stuff to talk about. But, first lets talk about my GSoC <a href="http://localhost:8000/gsoc21-internship.html">project</a> update.</p>
+<h4>Project update:</h4>
+<p>As of now I'm two weeks away from GSoC final project evaluation deadline (August 23rd). So, I'm a bit late for the project update blog post. A quick reminder, my <a href="https://gitlab.gnome.org/Teams/Engagement/gsoc-2021/-/issues/13">project</a> is to integrate Trusted platform module (TPM) support into GNOME/<a href="https://wiki.gnome.org/Projects/Libsecret">libsecret</a>. I'm happy to report that 95% of the work are completed and <a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests/90">integration</a> is the only part that remains.</p>
+<p>Recently, I gave my very first talk regarding the very same topic; libsecret project update. You can find it from <a href="https://youtu.be/DjmL5YbcPEQ?t=6178">here</a>. As well as the slides from <a href="https://dnuka.github.io/slides/libsecret-project-update-by-Dhanuka.pdf">here</a> if you're interested.</p>
+<p>My work is focused on libsecret's local storage (file-backend). Which is a new feature that allows a user to store secrets in a file. Current libsecret file-backend design support two options to encrypt the secrets/passwords inside the file database (a file). Option one is only for test purposes. And option two is using the user's login password to encrypt the file database. This design has a single point of failure. If the user's login password get compromised, then the contents of the file database get compromised too. This situation could be improved if the password is protected by hardware. So, that's when a TPM comes into play. A TPM is a physical hardware security module that performs everyday cryptographic needs. To simply put, my work is to add a third option to libsecret's file-backend design that adds TPM support. With this in place, if an attacker needs to get hold of your secrets, then they must have physical access to your computer system. In most cases this an impossible situation.</p>
+<p>There are three APIs (API levels based on the abstraction) to work with a TPM. For our specific needs, we have <a href="https://gitlab.gnome.org/GNOME/libsecret/-/issues/63">decided</a> to work with the TSS Enhanced System API (ESAPI).</p>
+<p>The following is the proopsed public API,</p>
+<div class="highlight"><pre><span></span><code>EggTpm2Context *egg_tpm2_initialize               (GError **);
+void           egg_tpm2_finalize                  (EggTpm2Context *);
+GBytes         *egg_tpm2_generate_master_password (EggTpm2Context *,
+                                                   GError **);
+GBytes         *egg_tpm2_decrypt_master_password  (EggTpm2Context *,
+                                                   GBytes *,
+                                                   GError **);             
+</code></pre></div>
+
+<p>Don't worry about <code>egg_</code> prefix. It means the API and its implementations are in the <a href="https://gitlab.gnome.org/GNOME/libsecret/-/tree/master/egg">incubation</a> area. A place where newest/proposed features get included until they become a part of the official libsecret API or other GNOME libraries. Folks who have access to a TPM can test out these new changes by building from the <a href="https://gitlab.gnome.org/GNOME/libsecret/">source</a>.</p>
+<h4>Lessons learned:</h4>
+<p>In my early days of the internship, I have struggled a lot. Due to lack of TPM learning and API resources. I was at a stage where I couldn't even write a single line code for days. That's when my mentors suggested to work on a <a href="https://github.com/dnuka/tpmsecret">toy project</a>. It was a huge success. So, when you're stuck with a complicated project, work on a minimal toy project.</p>
+<p>Always work with a design doc (a simple diagram). A design doc is a simple diagram that showcase what needs to implemented. It doesn't have to be long or a fancy one. Just include enough information to get started and update as you move forward.</p>
+<p>Apart from programming language proficiency. Git proficiency is a must. A lot of day to programming related stress could be avoided if you're proficient in Git. So, learn Git thoroughly.</p>
+<p>Remember to include your contact information in your presentation slides.</p>
+<p>Stay tuned for my last GSoC blog post.</p>
+</div>
+<br>
+<hr>
+
+<div class="ui horizontal list">
+<div class="footer">
+    <a class="item" href="/">Home</a>&nbsp;&nbsp;
+    <a class="item" href="https://github.com/dnuka">GitHub</a>&nbsp;&nbsp;
+    <a class="item" href="https://twitter.com/dnuka_">Twitter</a>&nbsp;&nbsp;
+    <a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>&nbsp;&nbsp;
+    <a class="item" href="rss.xml">RSS</a>&nbsp;&nbsp;
+</div>
+</div>
+<br>
+    </div>
+</body>
+</html>
