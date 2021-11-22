@@ -30,7 +30,7 @@
 &lt;p&gt;Toy project: &lt;a href="https://github.com/dnuka/tpmsecret"&gt;https://github.com/dnuka/tpmsecret&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;Merge Requests list: &lt;a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests?scope=all&amp;amp;state=merged&amp;amp;author_username=dnuka"&gt;https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests?scope=all&amp;amp;state=merged&amp;amp;author_username=dnuka&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Merge Requests list: &lt;a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests?scope=all&amp;amp;state=merged&amp;amp;author_username=dhanuka"&gt;https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests?scope=all&amp;amp;state=merged&amp;amp;author_username=dhanuka&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;Blog posts:&lt;/p&gt;
@@ -54,7 +54,7 @@
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;merged:&lt;/code&gt;&lt;/strong&gt; &lt;a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests/90"&gt;Add TPM2 integration to secret file backend&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;This is the integration task. This merge request uses the newly define TPM2 API to extend the libsecret's file backend to use an encryption key derived from a TPM.&lt;/p&gt;
 &lt;h4&gt;Other Merge Requests.&lt;/h4&gt;
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;wip:&lt;/code&gt;&lt;/strong&gt; &lt;a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests/93"&gt;Fix deprecated-declaration warnings&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;code&gt;merged:&lt;/code&gt;&lt;/strong&gt; &lt;a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests/93"&gt;Fix deprecated-declaration warnings&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;This merge request fixes the existing &lt;code&gt;deprecated-declarations&lt;/code&gt; warnings generated during the libsecret &lt;code&gt;build&lt;/code&gt; process.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;code&gt;merged:&lt;/code&gt;&lt;/strong&gt; &lt;a href="https://gitlab.gnome.org/GNOME/libsecret/-/merge_requests/85"&gt;Remove autotools config file&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;This merge request removes a left over &lt;code&gt;autotools&lt;/code&gt; configuration file.&lt;/p&gt;
