@@ -23,13 +23,13 @@
 <p>My work is focused on libsecret's local storage (file-backend). Which is a new feature that allows a user to store secrets in a file. Current libsecret file-backend design support two options to encrypt the secrets/passwords inside the file database (a file). Option one is only for test purposes. And option two is using the user's login password to encrypt the file database. This design has a single point of failure. If the user's login password get compromised, then the contents of the file database get compromised too. This situation could be improved if the password is protected by hardware. So, that's when a TPM comes into play. A TPM is a physical hardware security module that performs everyday cryptographic needs. To simply put, my work is to add a third option to libsecret's file-backend design that adds TPM support. With this in place, if an attacker needs to get hold of your secrets, then they must have physical access to your computer system. In most cases this an impossible situation.</p>
 <p>There are three APIs (API levels based on the abstraction) to work with a TPM. For our specific needs, we have <a href="https://gitlab.gnome.org/GNOME/libsecret/-/issues/63">decided</a> to work with the TSS Enhanced System API (ESAPI).</p>
 <p>The following is the proposed public API,</p>
-<div class="highlight"><pre><span></span><code>EggTpm2Context *egg_tpm2_initialize               (GError **);
+<div class="highlight"><pre><span></span><code>EggTpm2Context <span class="gs">*egg_tpm2_initialize               (GError *</span>*);
 void           egg_tpm2_finalize                  (EggTpm2Context *);
-GBytes         *egg_tpm2_generate_master_password (EggTpm2Context *,
+GBytes         <span class="gs">*egg_tpm2_generate_master_password (EggTpm2Context *</span>,
                                                    GError **);
-GBytes         *egg_tpm2_decrypt_master_password  (EggTpm2Context *,
-                                                   GBytes *,
-                                                   GError **);             
+GBytes         <span class="gs">*egg_tpm2_decrypt_master_password  (EggTpm2Context *</span>,
+                                                   GBytes <span class="gs">*,</span>
+<span class="gs">                                                   GError *</span>*);             
 </code></pre></div>
 
 <p>Don't worry about <code>egg_</code> prefix. It means the API and its implementations are in the <a href="https://gitlab.gnome.org/GNOME/libsecret/-/tree/master/egg">incubation</a> area. A place where newest/proposed features get included until they become a part of the official libsecret API or other GNOME libraries. Folks who have access to a TPM can test out these new changes by building from the <a href="https://gitlab.gnome.org/GNOME/libsecret/">source</a>.</p>

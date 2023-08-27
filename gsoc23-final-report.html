@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title> GSoC 23: Contributing to Checkpoint and Restore in Userspace (CRIU) - Final report </title>
+    <link rel="stylesheet" href="https://warusadura.github.io/theme/css/semantic.min.css">
+    <link rel="stylesheet" href="https://warusadura.github.io/theme/css/styles.css">
+</head>
+<body>
+<div class="home">
+    <code class="back"><a href="/">< Home</a></code>
+</div>
+    <div class="ui container">
+<h1 class="title">GSoC 23: Contributing to Checkpoint and Restore in Userspace (CRIU) - Final report</h1>
+<p>
+    8 27 2023
+</p>
+<div class="article">
+    <p>The purpose of writing this blog post is to share the work I have completed during the past 12 weeks of Google Summer of Code 2023.</p>
+<h4>Summary</h4>
+<ul>
+<li>
+<p>Project: <a href="https://summerofcode.withgoogle.com/archive/2023/projects/uEaniQVU">CRIU: Add support for memfd_secret file descriptors</a>.</p>
+</li>
+<li>
+<p>Feature implementation status: <strong><code>Complete</code></strong></p>
+</li>
+<li>
+<p>Feature implementation Pull Request: <a href="https://github.com/checkpoint-restore/criu/pull/2247">https://github.com/checkpoint-restore/criu/pull/2247</a></p>
+</li>
+<li>
+<p>Feature implementation patch acceptance to upstream status: <strong><code>WIP</code></strong></p>
+</li>
+<li>
+<p>Complete code contributions list: <a href="https://github.com/checkpoint-restore/criu/commits?author=warusadura">https://github.com/checkpoint-restore/criu/commits?author=warusadura</a></p>
+</li>
+</ul>
+<h4>Detailed Report</h4>
+<p>As stated in the CRIU project GitHub <a href="https://github.com/checkpoint-restore/criu/">page</a>, "CRIU (stands for Checkpoint and Restore in Userspace) is a utility to checkpoint/restore Linux tasks. Using this tool, you can freeze a running application (or part of it) and checkpoint it to a hard drive as a collection of files. You can then use the files to restore and run the application from the point it was frozen at".</p>
+<p>CRIU can checkpoint/restore a trivial hello_word process to running Linux containers. However, with the current implementation of CRIU, it can't checkpoint/restore a process that has a <code>memfd_secret</code> file descriptor(s) opened. So, my project was to implement this feature. Before we proceed, let's try to comprehend, what a <code>memfd_secret</code> file descriptor is.</p>
+<p>As stated in the <code>man</code> <a href="https://manpages.debian.org/unstable/manpages-dev/memfd_secret.2.en.html">page</a> of <code>memfd_secret()</code> system call, "<code>memfd_secret()</code> creates an anonymous RAM‐based file and returns a file descriptor that refers to it. The file provides a way to create and access memory regions with stronger  protection than usual RAM‐based files and anonymous memory mappings".</p>
+<p>Consider the following code example: <code>dumpee</code>,</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/mman.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/syscall.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unistd.h&gt;</span>
+
+<span class="cp">#define SECRET &quot;Hello World&quot;</span>
+<span class="cp">#define SIZE 11</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">memfd_secret</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">flags</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">syscall</span><span class="p">(</span><span class="n">SYS_memfd_secret</span><span class="p">,</span><span class="w"> </span><span class="n">flags</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="nf">secret_init</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">secretmem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memfd_secret</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fd</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">secretmem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ftruncate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">secretmem</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">secretmem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">PROT_READ</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">PROT_WRITE</span><span class="p">,</span><span class="w"> </span><span class="n">MAP_SHARED</span><span class="p">,</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">secretmem</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">MAP_FAILED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">secretmem</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">secretmem</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">secret_fini</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">mem</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">munmap</span><span class="p">(</span><span class="n">mem</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">secretmem</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pid: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">getpid</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">secretmem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">secret_init</span><span class="p">(</span><span class="n">SIZE</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">secretmem</span><span class="p">)</span>
+<span class="w">        </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;not supported operation&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">memcpy</span><span class="p">(</span><span class="n">secretmem</span><span class="p">,</span><span class="w"> </span><span class="n">SECRET</span><span class="p">,</span><span class="w"> </span><span class="n">SIZE</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%d bytes of secret data stored successfully at %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SIZE</span><span class="p">,</span><span class="w"> </span><span class="n">secretmem</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">pause</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">secret_fini</span><span class="p">(</span><span class="n">secretmem</span><span class="p">,</span><span class="w"> </span><span class="n">SIZE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;secret data successfully discarded</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Essentially, what this program does is, write a string constant: <code>Hello World</code> into <code>secretmem</code> area denoted by <code>memfd_secret</code> file descriptor and pause.</p>
+<p>There is a good chance that you can't run this code and get an runtime error like <code>Function not implemented</code>. This is because the <code>secretmem</code> feature is off by default and the user must explicitly enable it at the boot time by setting the Kernel boot parameter, <code>secretmem.enable=1</code> to enable the <code>memfd_secret()</code> system call.</p>
+<p>Let's execute this program program and examine its file descriptors,</p>
+<div class="highlight"><pre><span></span><code>./dumpee
+pid: 186078
+11 bytes of secret data stored successfully at 0x7ff75e817000
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>ls /proc/186078/fd/
+0  1  2  3
+</code></pre></div>
+
+<p>Process <code>186078</code> has three file descriptors attached to it. As any Linux process, it has the usual <code>stdin: 0</code>, <code>stdout: 1</code>, <code>stderr: 2</code> attached to it. Let's examine what's the <code>3</code>rd file descriptor is suppose to be,</p>
+<div class="highlight"><pre><span></span><code><span class="n">stat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">186078</span><span class="o">/</span><span class="n">fd</span><span class="o">/</span><span class="mi">3</span>
+<span class="w">  </span><span class="n">File</span><span class="o">:</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">186078</span><span class="o">/</span><span class="n">fd</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">secretmem</span><span class="w"> </span><span class="p">(</span><span class="n">deleted</span><span class="p">)</span>
+<span class="w">  </span><span class="n">Size</span><span class="o">:</span><span class="w"> </span><span class="mi">64</span><span class="w">          </span><span class="n">Blocks</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="w">          </span><span class="n">IO</span><span class="w"> </span><span class="n">Block</span><span class="o">:</span><span class="w"> </span><span class="mi">1024</span><span class="w">   </span><span class="n">symbolic</span><span class="w"> </span><span class="n">link</span>
+<span class="n">Device</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">22</span><span class="w">    </span><span class="n">Inode</span><span class="o">:</span><span class="w"> </span><span class="mi">1000267</span><span class="w">     </span><span class="n">Links</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">Access</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="mo">0700</span><span class="o">/</span><span class="n">lrwx</span><span class="o">------</span><span class="p">)</span><span class="w">  </span><span class="n">Uid</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="mi">1000</span><span class="o">/</span><span class="w"> </span><span class="n">dhanuka</span><span class="p">)</span><span class="w">   </span><span class="n">Gid</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="mi">1000</span><span class="o">/</span><span class="w"> </span><span class="n">dhanuka</span><span class="p">)</span>
+<span class="n">Access</span><span class="o">:</span><span class="w"> </span><span class="mi">2023</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="mi">17</span><span class="o">:</span><span class="mi">26</span><span class="o">:</span><span class="mf">51.819442448</span><span class="w"> </span><span class="o">+</span><span class="mo">0530</span>
+<span class="n">Modify</span><span class="o">:</span><span class="w"> </span><span class="mi">2023</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="mi">17</span><span class="o">:</span><span class="mi">26</span><span class="o">:</span><span class="mf">49.807432713</span><span class="w"> </span><span class="o">+</span><span class="mo">0530</span>
+<span class="n">Change</span><span class="o">:</span><span class="w"> </span><span class="mi">2023</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="mi">17</span><span class="o">:</span><span class="mi">26</span><span class="o">:</span><span class="mf">49.807432713</span><span class="w"> </span><span class="o">+</span><span class="mo">0530</span>
+<span class="w"> </span><span class="n">Birth</span><span class="o">:</span><span class="w"> </span><span class="o">-</span>
+</code></pre></div>
+
+<p>As shown the file descriptor <code>3</code> can be identified as <code>memfd_secret</code> file descriptor (pointing to <code>secretmem</code>). Since now we have a <code>memfd_secret</code> file descriptor containing process: <code>186078</code>, let's try to checkpoint it with the <a href="https://github.com/checkpoint-restore/criu/releases/tag/v3.18">latest</a> CRIU release,</p>
+<div class="highlight"><pre><span></span><code><span class="nx">git</span><span class="w"> </span><span class="nx">checkout</span><span class="w"> </span><span class="nx">criu</span><span class="o">-</span><span class="nx">dev</span>
+
+<span class="p">.</span><span class="o">/</span><span class="nx">criu</span><span class="o">/</span><span class="nx">criu</span><span class="w"> </span><span class="o">--</span><span class="nx">version</span>
+<span class="nx">Version</span><span class="p">:</span><span class="w"> </span><span class="m m-Double">3.18</span>
+
+<span class="nx">sudo</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="nx">criu</span><span class="o">/</span><span class="nx">criu</span><span class="w"> </span><span class="nx">dump</span><span class="w"> </span><span class="o">-</span><span class="nx">D</span><span class="w"> </span><span class="nx">dumpdir</span><span class="o">/</span><span class="w"> </span><span class="o">--</span><span class="nx">shell</span><span class="o">-</span><span class="nx">job</span><span class="w"> </span><span class="o">-</span><span class="nx">t</span><span class="w"> </span><span class="mi">186078</span>
+<span class="nx">Error</span><span class="w"> </span><span class="p">(</span><span class="nx">criu</span><span class="o">/</span><span class="nx">proc_parse</span><span class="p">.</span><span class="nx">c</span><span class="p">:</span><span class="mi">467</span><span class="p">):</span><span class="w"> </span><span class="nx">Unknown</span><span class="w"> </span><span class="nx">shit</span><span class="w"> </span><span class="mi">100600</span><span class="w"> </span><span class="p">(</span><span class="o">/</span><span class="nx">secretmem</span><span class="w"> </span><span class="p">(</span><span class="nx">deleted</span><span class="p">))</span>
+<span class="nx">Error</span><span class="w"> </span><span class="p">(</span><span class="nx">criu</span><span class="o">/</span><span class="nx">proc_parse</span><span class="p">.</span><span class="nx">c</span><span class="p">:</span><span class="mi">694</span><span class="p">):</span><span class="w"> </span><span class="nx">Can</span><span class="err">&#39;</span><span class="nx">t</span><span class="w"> </span><span class="nx">open</span><span class="w"> </span><span class="mi">186078</span><span class="err">&#39;</span><span class="nx">s</span><span class="w"> </span><span class="nx">mapfile</span><span class="w"> </span><span class="nx">link</span><span class="w"> </span><span class="mi">7</span><span class="nx">ff75e817000</span><span class="p">:</span><span class="w"> </span><span class="nx">No</span><span class="w"> </span><span class="nx">such</span><span class="w"> </span><span class="nx">device</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="nx">address</span>
+<span class="nx">Error</span><span class="w"> </span><span class="p">(</span><span class="nx">criu</span><span class="o">/</span><span class="nx">cr</span><span class="o">-</span><span class="nx">dump</span><span class="p">.</span><span class="nx">c</span><span class="p">:</span><span class="mi">1558</span><span class="p">):</span><span class="w"> </span><span class="nx">Collect</span><span class="w"> </span><span class="nx">mappings</span><span class="w"> </span><span class="p">(</span><span class="nx">pid</span><span class="p">:</span><span class="w"> </span><span class="mi">186078</span><span class="p">)</span><span class="w"> </span><span class="nx">failed</span><span class="w"> </span><span class="nx">with</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span>
+<span class="nx">Error</span><span class="w"> </span><span class="p">(</span><span class="nx">criu</span><span class="o">/</span><span class="nx">cr</span><span class="o">-</span><span class="nx">dump</span><span class="p">.</span><span class="nx">c</span><span class="p">:</span><span class="mi">2093</span><span class="p">):</span><span class="w"> </span><span class="nx">Dumping</span><span class="w"> </span><span class="nx">FAILED</span><span class="p">.</span>
+</code></pre></div>
+
+<p>As shown the checkpoint operation fails. Because, during a checkpoint operation (among other things) CRIU attempts to dump/save all the file descriptors attached to the process. In this case one file descriptor is <code>memfd_secret()</code>. Since CRIU doesn't understand (yet) how to parse a <code>memfd_secret()</code> file descriptor, the checkpoint operation fails with the subtle <code>Unknown shit</code> error.</p>
+<p>Now for the exciting part, let's try to checkpoint the <code>186078</code> process with CRIU with my feature implementation in place,</p>
+<div class="highlight"><pre><span></span><code>git checkout memfd-secret
+
+sudo ./criu/criu dump -D dumpdir/ -v4 --shell-job -t 186078
+
+...........
+(00.225313) Writing image inventory (version 1)
+(00.225403) Running post-dump scripts
+(00.225408) Unfreezing tasks into 2
+(00.225411)     Unseizing 186078 into 2
+(00.225565) Writing stats
+(00.225619) Dumping finished successfully
+</code></pre></div>
+
+<p>As shown the checkpoint operation succeeds. After a successful checkpoint operation, it's recommended to check the <code>dumpdir</code> directory to verify how the checkpoint operation went,</p>
+<div class="highlight"><pre><span></span><code>ls dumpdir
+core-186078.img  inventory.img                  pages-1.img  timens-0.img
+fdinfo-2.img     memfd-secret.img               pages-2.img  tty-info.img
+files.img        mm-186078.img                  pstree.img
+fs-186078.img    pagemap-186078.img             seccomp.img
+ids-186078.img   pagemap-secretmem-1000258.img  stats-dump
+</code></pre></div>
+
+<p><code>dumpdir/pages-1.img</code> is a file of interest. Let's examine it,</p>
+<div class="highlight"><pre><span></span><code>hexdump -C dumpdir/pages-1.img 
+00000000  48 65 6c 6c 6f 20 57 6f  72 6c 64 00 00 00 00 00  |Hello World.....|
+00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+<span class="k">*</span>
+00001000
+</code></pre></div>
+
+<p>Evidently, we have our <code>secretmem</code> content: <code>Hello World</code> in <code>dumpdir/pages-1.img</code>. So, the checkpoint operation is a success. Now let's try to restore this checkpointed process,</p>
+<div class="highlight"><pre><span></span><code>sudo ./criu/criu restore -D dumpdir/ -v4 --shell-job
+
+...........
+(00.041186) Running pre-resume scripts
+(00.041202) Restore finished successfully. Tasks resumed.
+(00.041209) Writing stats
+(00.041342) Running post-resume scripts
+</code></pre></div>
+
+<p>As shown, the restore operation succeeds as well. Let's look for this restored process and examine its file descriptors to verify the accuracy of the restore operation,</p>
+<div class="highlight"><pre><span></span><code>pgrep dumpee
+186078
+
+ls /proc/186078/fd
+0  1  2  3
+</code></pre></div>
+
+<p>Evidently we have the same exact number of file descriptors attached to the restored process: <code>186078</code>. Let's examine the file descriptor <code>3</code> to see whether it's a <code>memfd_secret</code> file descriptor or not.</p>
+<div class="highlight"><pre><span></span><code><span class="n">stat</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">186078</span><span class="o">/</span><span class="n">fd</span><span class="o">/</span><span class="mi">3</span>
+<span class="w">  </span><span class="n">File</span><span class="o">:</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="mi">186078</span><span class="o">/</span><span class="n">fd</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">secretmem</span><span class="w"> </span><span class="p">(</span><span class="n">deleted</span><span class="p">)</span>
+<span class="w">  </span><span class="n">Size</span><span class="o">:</span><span class="w"> </span><span class="mi">64</span><span class="w">          </span><span class="n">Blocks</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="w">          </span><span class="n">IO</span><span class="w"> </span><span class="n">Block</span><span class="o">:</span><span class="w"> </span><span class="mi">1024</span><span class="w">   </span><span class="n">symbolic</span><span class="w"> </span><span class="n">link</span>
+<span class="n">Device</span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">22</span><span class="w">    </span><span class="n">Inode</span><span class="o">:</span><span class="w"> </span><span class="mi">1037589</span><span class="w">     </span><span class="n">Links</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">Access</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="mo">0700</span><span class="o">/</span><span class="n">lrwx</span><span class="o">------</span><span class="p">)</span><span class="w">  </span><span class="n">Uid</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="mi">1000</span><span class="o">/</span><span class="w"> </span><span class="n">dhanuka</span><span class="p">)</span><span class="w">   </span><span class="n">Gid</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="mi">1000</span><span class="o">/</span><span class="w"> </span><span class="n">dhanuka</span><span class="p">)</span>
+<span class="n">Access</span><span class="o">:</span><span class="w"> </span><span class="mi">2023</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="mi">18</span><span class="o">:</span><span class="mo">07</span><span class="o">:</span><span class="mf">25.787215250</span><span class="w"> </span><span class="o">+</span><span class="mo">0530</span>
+<span class="n">Modify</span><span class="o">:</span><span class="w"> </span><span class="mi">2023</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="mi">18</span><span class="o">:</span><span class="mo">07</span><span class="o">:</span><span class="mf">24.019204721</span><span class="w"> </span><span class="o">+</span><span class="mo">0530</span>
+<span class="n">Change</span><span class="o">:</span><span class="w"> </span><span class="mi">2023</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">26</span><span class="w"> </span><span class="mi">18</span><span class="o">:</span><span class="mo">07</span><span class="o">:</span><span class="mf">24.019204721</span><span class="w"> </span><span class="o">+</span><span class="mo">0530</span>
+<span class="w"> </span><span class="n">Birth</span><span class="o">:</span><span class="w"> </span><span class="o">-</span>
+</code></pre></div>
+
+<p>Bingo! The file descriptor <code>3</code> is indeed <code>memfd_secret</code>! However, the restored process verification is not over yet. We have one last thing to check for. That's if the original <code>secretmem</code> content/data: <code>Hello World</code> is in this restored process's <code>secretmem</code> area pointed by the <code>3</code>rd file descriptor or not. To do that let's perform a secondary checkpoint (to a new directory) against this restored process: <code>186078</code> and examine the content of <code>pages-1.img</code> file,</p>
+<div class="highlight"><pre><span></span><code>pgrep dumpee
+186078
+
+sudo criu dump -D dumpdir2/ -v4 --shell-job -t 186078
+
+hexdump -C dumpdir2/pages-1.img 
+00000000  48 65 6c 6c 6f 20 57 6f  72 6c 64 00 00 00 00 00  |Hello World.....|
+00000010  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+<span class="k">*</span>
+00001000
+</code></pre></div>
+
+<p>Evidently, not only the restored process has a <code>memfd_secret</code> file descriptor attached to it, but also the original <code>secretmem</code> content: <code>Hello World</code>. So, the feature implementation is fully <strong><code>complete</code></strong> and it <strong><code>works</code></strong>.</p>
+<h4>Closing thoughts</h4>
+<p>I had a phenomenal experience working on this project under the mentorship of <a href="https://github.com/mihalicyn">Alexander Mikhalitsyn</a> and <a href="https://github.com/rppt">Mike Rapoport</a>. Initially, I knew nothing about CRIU or <code>secretmem</code>. I had to learn everything on the fly. It wasn't easy. But, I had help from my mentors and CRIU is an extremely well engineered project. The feature implementation was an iterative process. All I had to do was follow and fix one error at a time. In between I have learned how to read complex code: weird looking macros to complex function implementations, and debug and fix tricky errors. Overall, this was an enormous opportunity for me and I'm truly grateful for my mentors for their support and guidance.</p>
+<p>Stay tuned for my next blog post.</p>
+</div>
+<br>
+<hr>
+
+<div class="ui horizontal list">
+<div class="footer">
+    <a class="item" href="/">Home</a>&nbsp;&nbsp;
+		<a class="item" href="mailto:dhanuka@disroot.org">Contact</a>&nbsp;&nbsp;
+    <a class="item" href="https://github.com/warusadura">GitHub</a>&nbsp;&nbsp;
+    <a class="item" href="https://gitlab.gnome.org/dhanuka">GNOME/GitLab</a>&nbsp;&nbsp;
+    <a class="item" href="https://gitlab.com/warusadura">GitLab</a>&nbsp;&nbsp;
+		<a class="item" href="https://stackoverflow.com/users/4533771/dnuka?tab=profile">StackOverflow</a>&nbsp;&nbsp;
+    <a class="item" href="https://twitter.com/dhanuka_w">Twitter</a>&nbsp;&nbsp;
+    <a class="item" href="rss.xml">RSS</a>&nbsp;&nbsp;
+</div>
+</div>
+<br>
+    </div>
+</body>
+</html>
